@@ -45,6 +45,9 @@ class Canvas(QLabel):
         #btnCircle.clicked.connect()
 
 class Pen(QLabel):
+    def __init__(self):
+        super().__init__()
+
     # 마우스가 눌린 상태에서 움직이면 발생
     def mouseMoveEvent(self, e):
         painter = QPainter(self.pixmap())
@@ -62,6 +65,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         
         self.Canvas = Canvas((1260, 700))
+        self.Pen = Pen()
         self.setFixedSize(1280, 720)
 
         MainWidget = QWidget()
