@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QHBoxLayout, QWidget, QPushButton, QFileDialog, QColorDialog, QGridLayout, QGraphicsScene
 from PyQt5.QtGui import QPainter, QPen, QBrush, QPixmap, QColor
 from PyQt5.QtCore import QPoint, QRect
+from copy import deepcopy
 
 class Canvas(QLabel):
     def __init__(self, parent, size):
@@ -84,21 +85,28 @@ class Canvas(QLabel):
 
 
     def ButtonClickedSquare(self, e):
+        t_pixmap = self.pixmap()
+        #print(dir(t_pixmap))
+        t_pixmap = t_pixmap.copy(0, 0, t_pixmap.width(), t_pixmap.height())
         Square = QPainter(self.pixmap())
         Square.setPen(QPen(QColor(self.pencolor)))
-        Square.drawRect(QRect(self.begin, self.end))
+        Square.drawRect(QRect(self.begin, e.pos()))
         Square.end()
         self.repaint()
+        self.setPixmap(t_pixmap) 
 
     def mousePressEvent(self, e):
         self.begin = e.pos()
-        #self.end = e.pos()
         self.update()
 
-    def mouseRelaseEvent(self, e):
-        #self.begin = e.pos()
-        self.end = e.pos()
-        self.update()
+    def mouseReleaseEvent(self, e):
+        Square = QPainter(self.pixmap())
+        Square.setPen(QPen(QColor(self.pencolor)))
+        Square.drawRect(QRect(self.begin, e.pos()))
+        Square.end()
+        self.repaint()
+        #self.end = e.pos()
+        #self.update()
 
     def ButtonClickedFile(self):
         fname = QFileDialog.getOpenFileName(self)
@@ -115,7 +123,8 @@ class Canvas(QLabel):
     def mouseMoveEventPen(self, e):        
         painter = QPainter(self.pixmap())
         painter.setPen(QPen(QColor(self.pencolor), 2))
-        painter.drawPoint(e.x(), e.y())
+        painter.drawLine(self.begin, e.pos())
+        self.begin = e.pos()
         painter.end()
 
         # QLabel을 업데이트 해주는 함수
