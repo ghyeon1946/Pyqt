@@ -219,11 +219,13 @@ class Canvas(QLabel):
             pixmap = QPixmap(fname[0])
 
             self.label1.setPixmap(pixmap)  # 이미지 세팅
-            self.label1.setContentsMargins(10, 50, 10, 10)
+            #self.label1.setContentsMargins(10, 50, 10, 10)
             self.label1.resize(pixmap.width(), pixmap.height())
 
             # 이미지의 크기에 맞게 Resize
             self.resize(pixmap.width(), pixmap.height())
+
+            self.show()
 
         # pixmap = QPixmap(fname[0])
         # pixmap.scaled(1280, 720)
