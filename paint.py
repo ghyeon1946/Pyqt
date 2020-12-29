@@ -39,6 +39,9 @@ class Canvas(QLabel):
         self.begin = QPoint()
         self.end = QPoint()
 
+        self.label1 = QLabel(self)
+        self.label1.move(60, 60)
+
         # 그림판 초기화
         self.clear_canvas()
         self.initBtn()
@@ -110,7 +113,7 @@ class Canvas(QLabel):
     def ButtonClickedErase(self, e):
         self.count == 3
         painter = QPainter(self.pixmap())
-        painter.setPen(QPen(QColor(self.backgroundcolor), 5))
+        painter.setPen(QPen(QColor(self.backgroundcolor), 15))
         painter.drawLine(self.begin, e.pos())
         self.begin = e.pos()
         painter.end()
@@ -133,7 +136,7 @@ class Canvas(QLabel):
 
         elif sender == self.backbtn:
             self.backgroundcolor = color
-            #self.clear_canvas()
+            self.clear_canvas()
 
     def ButtonClickedCircle(self, e):
         self.count = 1
@@ -201,21 +204,32 @@ class Canvas(QLabel):
             self.repaint()
 
         elif self.count == 3:
-            Square = QPainter(self.pixmap())
-            Square.setPen(QPen(QColor(self.backgroundcolor),self.cb.currentIndex()))
-            Square.setBrush(QColor(self.backgroundcolor))
-            Square.drawLine(self.begin, e.pos())
-            Square.end()
+            back = QPainter(self.pixmap())
+            back.setPen(QPen(QColor(self.backgroundcolor),self.cb.currentIndex()))
+            back.setBrush(QColor(self.backgroundcolor))
+            back.drawLine(self.begin, e.pos())
+            back.end()
             self.repaint()
 
     def ButtonClickedFile(self):
         fname = QFileDialog.getOpenFileName(self)
 
-        pixmap = QPixmap(fname[0])
-        pixmap.scaled(1280, 720)
-        self.setPixmap(QPixmap(pixmap))
+        if fname[0]:
+            # QPixmap 객체
+            pixmap = QPixmap(fname[0])
 
-        self.show()
+            self.label1.setPixmap(pixmap)  # 이미지 세팅
+            self.label1.setContentsMargins(10, 50, 10, 10)
+            self.label1.resize(pixmap.width(), pixmap.height())
+
+            # 이미지의 크기에 맞게 Resize
+            self.resize(pixmap.width(), pixmap.height())
+
+        # pixmap = QPixmap(fname[0])
+        # pixmap.scaled(1280, 720)
+        # self.setPixmap(QPixmap(pixmap))
+
+        # self.show()
         
     def changeMouseMoveEvent(self):
         self.mouseMoveEvent = self.mouseMoveEventPen
