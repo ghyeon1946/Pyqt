@@ -38,7 +38,7 @@ class Canvas(QLabel):
         #btnTriangle.clicked.connect()
 
         btnCircle = QPushButton('원', self)   # 버튼 텍스트
-        btnCircle.resize(50, 50)dsfds
+        btnCircle.resize(50, 50)
         btnCircle.move(200, 20)   # 버튼 위치
         #btnCircle.clicked.connect()
 
