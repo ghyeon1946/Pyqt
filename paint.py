@@ -73,7 +73,7 @@ class Canvas(QLabel):
         btnLine = QPushButton('직선', self)
         btnLine.resize(50, 50)
         btnLine.move(540, 20)
-        btnLine.clicked.connect(self.ButtonClickedFile)
+        btnLine.clicked.connect(self.changeMouseMoveEvent4)
 
     def ColorLine(self):       
         # 색상 대화상자 생성      
@@ -110,7 +110,19 @@ class Canvas(QLabel):
         Square.drawRect(QRect(self.begin, e.pos()))
         Square.end()
         self.repaint()
-        self.setPixmap(t_pixmap) 
+        self.setPixmap(t_pixmap)
+
+    def ButtonClickedLine(self, e):
+        self.count = 2
+        t_pixmap = self.pixmap()
+        t_pixmap = t_pixmap.copy(0, 0, t_pixmap.width(), t_pixmap.height())
+        Square = QPainter(self.pixmap())
+        Square.setPen(QPen(QColor(self.pencolor)))
+        Square.setBrush(QColor(self.brushcolor))
+        Square.drawLine(self.begin, e.pos())
+        Square.end()
+        self.repaint()
+        self.setPixmap(t_pixmap)
 
     def mousePressEvent(self, e):
         self.begin = e.pos()
@@ -133,6 +145,14 @@ class Canvas(QLabel):
             Square.end()
             self.repaint()
 
+        elif self.count == 2:
+            Square = QPainter(self.pixmap())
+            Square.setPen(QPen(QColor(self.pencolor)))
+            Square.setBrush(QColor(self.brushcolor))
+            Square.drawLine(self.begin, e.pos())
+            Square.end()
+            self.repaint()
+
     def ButtonClickedFile(self):
         fname = QFileDialog.getOpenFileName(self)
 
@@ -144,6 +164,9 @@ class Canvas(QLabel):
 
     def changeMouseMoveEvent3(self):
         self.mouseMoveEvent = self.ButtonClickedCircle
+
+    def changeMouseMoveEvent4(self):
+        self.mouseMoveEvent = self.ButtonClickedLine
 
     def mouseMoveEvent(self, e):
         self.count = 10
