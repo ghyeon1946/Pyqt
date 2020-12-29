@@ -156,6 +156,12 @@ class Canvas(QLabel):
     def ButtonClickedFile(self):
         fname = QFileDialog.getOpenFileName(self)
 
+        pixmap = QPixmap(fname[0])
+        pixmap.resize
+        self.setPixmap(QPixmap(pixmap))
+
+        self.show()
+        
     def changeMouseMoveEvent(self):
         self.mouseMoveEvent = self.mouseMoveEventPen
 
