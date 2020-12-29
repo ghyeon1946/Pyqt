@@ -1,14 +1,33 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QHBoxLayout, QWidget, QPushButton, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QHBoxLayout, QWidget, QPushButton, QFileDialog, QColorDialog, QGridLayout, QGraphicsScene
 from PyQt5.QtGui import QPainter, QPen, QBrush, QPixmap, QColor
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import *
 
 class Canvas(QLabel):
     def __init__(self, parent, size):
         super().__init__(parent=parent)
+
         self.size = size
         self.setPixmap(QPixmap(*size))
         self.setFixedSize(*size)
+
+        self.pencolor = QColor(0,0,0)
+
+        self.pencolor = QColor(0,0,0)
+        self.penbtn = QPushButton('테두리 색상', self)
+        self.penbtn.resize(90, 50)
+        self.penbtn.move(340, 20)    
+        self.penbtn.clicked.connect(self.ColorLine)
+
+        self.brushcolor = QColor(255,255,255)
+        self.brushbtn = QPushButton('도형 채우기', self)
+        self.brushbtn.resize(90, 50)
+        self.brushbtn.move(440, 20)
+        self.brushbtn.clicked.connect(self.ColorLine)
+
+        self.brushcolor = QColor(255,255,255)
+
+        self.scene = QGraphicsScene() 
 
         # 그림판 초기화
         self.clear_canvas()
@@ -30,7 +49,7 @@ class Canvas(QLabel):
         btnSquare = QPushButton('사각형', self)   # 버튼 텍스트
         btnSquare.resize(50, 50)
         btnSquare.move(80, 20)   # 버튼 위치
-        #btnSquare.clicked.connect()
+        btnSquare.clicked.connect(self.ButtonClickedSquare)
 
         btnTriangle = QPushButton('세모', self)   # 버튼 텍스트
         btnTriangle.resize(50, 50)
@@ -43,11 +62,42 @@ class Canvas(QLabel):
         #btnCircle.clicked.connect()
 
         btnFile = QPushButton('불러오기', self)
-        btnFile.resize(50, 50)
+        btnFile.resize(70, 50)
         btnFile.move(260, 20)
-        btnFile.clicked.connect(self.pushButtonClicked)
+        btnFile.clicked.connect(self.ButtonClickedFile)
 
-    def pushButtonClicked(self):
+    def ColorLine(self):       
+        # 색상 대화상자 생성      
+        color = QColorDialog.getColor()
+ 
+        sender = self.sender()
+ 
+        # 색상이 유효한 값이면 참, QFrame에 색 적용
+        if sender == self.penbtn and color.isValid():           
+            self.pencolor = color
+
+        else:
+            self.brushcolor = color
+
+    def ButtonClickedSquare(self):
+                if len(self.items) > 0:
+                    self.scene.removeItem(self.items[-1])
+                    del(self.items[-1])
+
+                rect = QRectF(self.start, self.end)
+                self.items.append(self.scene.addRect(rect, pen, brush))
+
+    def mousePressEvent(self, e):
+        self.begin = e.pos()
+        self.end = e.pos()
+        self.update()
+
+    def mouseRelaseEvent(self, e):
+        self.begin = e.pos()
+        self.end = e.pos()
+        self.update()
+
+    def ButtonClickedFile(self):
         fname = QFileDialog.getOpenFileName(self)
 
     def changeMouseMoveEvent(self):
@@ -56,12 +106,9 @@ class Canvas(QLabel):
     def mouseMoveEvent(self, e):
         pass
 
-    def mousePressEvent(self, e):
-        pass
-
     def mouseMoveEventPen(self, e):        
         painter = QPainter(self.pixmap())
-        painter.setPen(QPen(QColor(0, 0, 0), 2))
+        painter.setPen(QPen(QColor(self.pencolor), 2))
         
         painter.drawPoint(e.x(), e.y())
         
@@ -74,7 +121,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         
-        self.canvas = Canvas(self, (1260, 700))
+        self.canvas = Canvas(self, (1280, 720))
         self.setFixedSize(1280, 720)
         
         self.setCentralWidget(self.canvas)
