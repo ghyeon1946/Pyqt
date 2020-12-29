@@ -63,12 +63,17 @@ class Canvas(QLabel):
         btnCircle = QPushButton('원', self)   # 버튼 텍스트
         btnCircle.resize(50, 50)
         btnCircle.move(200, 20)   # 버튼 위치
-        #btnCircle.clicked.connect()
+        btnCircle.clicked.connect(self.changeMouseMoveEvent3)
 
         btnFile = QPushButton('불러오기', self)
         btnFile.resize(70, 50)
         btnFile.move(260, 20)
         btnFile.clicked.connect(self.ButtonClickedFile)
+
+        btnLine = QPushButton('직선', self)
+        btnLine.resize(50, 50)
+        btnLine.move(540, 20)
+        btnLine.clicked.connect(self.ButtonClickedFile)
 
     def ColorLine(self):       
         # 색상 대화상자 생성      
@@ -83,13 +88,25 @@ class Canvas(QLabel):
         else:
             self.brushcolor = color
 
-
-    def ButtonClickedSquare(self, e):
+    def ButtonClickedCircle(self, e):
+        self.count = 1
         t_pixmap = self.pixmap()
-        #print(dir(t_pixmap))
         t_pixmap = t_pixmap.copy(0, 0, t_pixmap.width(), t_pixmap.height())
         Square = QPainter(self.pixmap())
         Square.setPen(QPen(QColor(self.pencolor)))
+        Square.setBrush(QColor(self.brushcolor))
+        Square.drawEllipse(QRect(self.begin, e.pos()))
+        Square.end()
+        self.repaint()
+        self.setPixmap(t_pixmap)
+
+    def ButtonClickedSquare(self, e):
+        self.count = 0
+        t_pixmap = self.pixmap()
+        t_pixmap = t_pixmap.copy(0, 0, t_pixmap.width(), t_pixmap.height())
+        Square = QPainter(self.pixmap())
+        Square.setPen(QPen(QColor(self.pencolor)))
+        Square.setBrush(QColor(self.brushcolor))
         Square.drawRect(QRect(self.begin, e.pos()))
         Square.end()
         self.repaint()
@@ -100,13 +117,21 @@ class Canvas(QLabel):
         self.update()
 
     def mouseReleaseEvent(self, e):
-        Square = QPainter(self.pixmap())
-        Square.setPen(QPen(QColor(self.pencolor)))
-        Square.drawRect(QRect(self.begin, e.pos()))
-        Square.end()
-        self.repaint()
-        #self.end = e.pos()
-        #self.update()
+        if self.count == 0:
+            Square = QPainter(self.pixmap())
+            Square.setPen(QPen(QColor(self.pencolor)))
+            Square.setBrush(QColor(self.brushcolor))
+            Square.drawRect(QRect(self.begin, e.pos()))
+            Square.end()
+            self.repaint()
+        
+        elif self.count == 1:
+            Square = QPainter(self.pixmap())
+            Square.setPen(QPen(QColor(self.pencolor)))
+            Square.setBrush(QColor(self.brushcolor))
+            Square.drawEllipse(QRect(self.begin, e.pos()))
+            Square.end()
+            self.repaint()
 
     def ButtonClickedFile(self):
         fname = QFileDialog.getOpenFileName(self)
@@ -117,7 +142,11 @@ class Canvas(QLabel):
     def changeMouseMoveEvent2(self):
         self.mouseMoveEvent = self.ButtonClickedSquare
 
+    def changeMouseMoveEvent3(self):
+        self.mouseMoveEvent = self.ButtonClickedCircle
+
     def mouseMoveEvent(self, e):
+        self.count = 10
         pass
 
     def mouseMoveEventPen(self, e):        
