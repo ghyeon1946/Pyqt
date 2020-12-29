@@ -28,7 +28,11 @@ class Canvas(QLabel):
         self.brushbtn.move(440, 20)
         self.brushbtn.clicked.connect(self.ColorLine)
 
-        self.brushcolor = QColor(255,255,255)
+        self.backgroundcolor = QColor(255, 255, 255)
+        self.backbtn = QPushButton('배경색', self)
+        self.backbtn.resize(60, 50)
+        self.backbtn.move(840, 20)
+        self.backbtn.clicked.connect(self.ColorLine)
 
         self.scene = QGraphicsScene() 
         
@@ -42,7 +46,7 @@ class Canvas(QLabel):
     # 그림 그릴 곳을 하얀색으로 칠하기
     def clear_canvas(self):
         painter = QPainter(self.pixmap())
-        painter.setBrush(QBrush(QColor(255, 255, 255)))
+        painter.setBrush(QColor(self.backgroundcolor))
         painter.drawRect(-100, -100, self.size[0]+100, self.size[1]+100)
         painter.end()
     
@@ -80,25 +84,39 @@ class Canvas(QLabel):
         btnErase = QPushButton('지우개', self)
         btnErase.resize(50, 50)
         btnErase.move(600, 20)
-        #btnErase.clicked.connect()
+        btnErase.clicked.connect(self.changeMouseMoveEvent5)
 
-        
         self.label = QLabel('선 두께', self)
         self.label.resize(50, 50)
         self.label.move(660, 20)
 
-        cb = QComboBox(self)
-        cb.addItem('1')
-        cb.addItem('2')
-        cb.addItem('3')
-        cb.addItem('4')
-        cb.addItem('5')
-        cb.addItem('6')
-        cb.addItem('7')
-        cb.addItem('8')
-        cb.addItem('9')
-        cb.addItem('10')
-        cb.move(720, 35)
+        self.cb = QComboBox(self)
+        self.cb.addItem('1')
+        self.cb.addItem('2')
+        self.cb.addItem('3')
+        self.cb.addItem('4')
+        self.cb.addItem('5')
+        self.cb.addItem('6')
+        self.cb.addItem('7')
+        self.cb.addItem('8')
+        self.cb.addItem('9')
+        self.cb.addItem('10')
+        self.cb.move(720, 35)
+
+        self.label = QLabel('배경색', self)
+        self.label.resize(50, 50)
+        self.label.move(780, 20)
+
+    def ButtonClickedErase(self, e):
+        self.count == 3
+        painter = QPainter(self.pixmap())
+        painter.setPen(QPen(QColor(self.backgroundcolor), 5))
+        painter.drawLine(self.begin, e.pos())
+        self.begin = e.pos()
+        painter.end()
+
+        # QLabel을 업데이트 해주는 함수
+        self.repaint()
 
     def ColorLine(self):       
         # 색상 대화상자 생성      
@@ -110,15 +128,19 @@ class Canvas(QLabel):
         if sender == self.penbtn and color.isValid():           
             self.pencolor = color
 
-        else:
+        elif sender == self.brushbtn:
             self.brushcolor = color
+
+        elif sender == self.backbtn:
+            self.backgroundcolor = color
+            #self.clear_canvas()
 
     def ButtonClickedCircle(self, e):
         self.count = 1
         t_pixmap = self.pixmap()
         t_pixmap = t_pixmap.copy(0, 0, t_pixmap.width(), t_pixmap.height())
         Square = QPainter(self.pixmap())
-        Square.setPen(QPen(QColor(self.pencolor)))
+        Square.setPen(QPen(QColor(self.pencolor), self.cb.currentIndex()))
         Square.setBrush(QColor(self.brushcolor))
         Square.drawEllipse(QRect(self.begin, e.pos()))
         Square.end()
@@ -130,7 +152,7 @@ class Canvas(QLabel):
         t_pixmap = self.pixmap()
         t_pixmap = t_pixmap.copy(0, 0, t_pixmap.width(), t_pixmap.height())
         Square = QPainter(self.pixmap())
-        Square.setPen(QPen(QColor(self.pencolor)))
+        Square.setPen(QPen(QColor(self.pencolor), self.cb.currentIndex()))
         Square.setBrush(QColor(self.brushcolor))
         Square.drawRect(QRect(self.begin, e.pos()))
         Square.end()
@@ -142,7 +164,7 @@ class Canvas(QLabel):
         t_pixmap = self.pixmap()
         t_pixmap = t_pixmap.copy(0, 0, t_pixmap.width(), t_pixmap.height())
         Square = QPainter(self.pixmap())
-        Square.setPen(QPen(QColor(self.pencolor)))
+        Square.setPen(QPen(QColor(self.pencolor), self.cb.currentIndex()))
         Square.setBrush(QColor(self.brushcolor))
         Square.drawLine(self.begin, e.pos())
         Square.end()
@@ -156,7 +178,7 @@ class Canvas(QLabel):
     def mouseReleaseEvent(self, e):
         if self.count == 0:
             Square = QPainter(self.pixmap())
-            Square.setPen(QPen(QColor(self.pencolor)))
+            Square.setPen(QPen(QColor(self.pencolor), self.cb.currentIndex()))
             Square.setBrush(QColor(self.brushcolor))
             Square.drawRect(QRect(self.begin, e.pos()))
             Square.end()
@@ -164,7 +186,7 @@ class Canvas(QLabel):
         
         elif self.count == 1:
             Square = QPainter(self.pixmap())
-            Square.setPen(QPen(QColor(self.pencolor)))
+            Square.setPen(QPen(QColor(self.pencolor), self.cb.currentIndex()))
             Square.setBrush(QColor(self.brushcolor))
             Square.drawEllipse(QRect(self.begin, e.pos()))
             Square.end()
@@ -172,8 +194,16 @@ class Canvas(QLabel):
 
         elif self.count == 2:
             Square = QPainter(self.pixmap())
-            Square.setPen(QPen(QColor(self.pencolor)))
+            Square.setPen(QPen(QColor(self.pencolor),self.cb.currentIndex()))
             Square.setBrush(QColor(self.brushcolor))
+            Square.drawLine(self.begin, e.pos())
+            Square.end()
+            self.repaint()
+
+        elif self.count == 3:
+            Square = QPainter(self.pixmap())
+            Square.setPen(QPen(QColor(self.backgroundcolor),self.cb.currentIndex()))
+            Square.setBrush(QColor(self.backgroundcolor))
             Square.drawLine(self.begin, e.pos())
             Square.end()
             self.repaint()
@@ -199,12 +229,15 @@ class Canvas(QLabel):
     def changeMouseMoveEvent4(self):
         self.mouseMoveEvent = self.ButtonClickedLine
 
+    def changeMouseMoveEvent5(self):
+        self.mouseMoveEvent = self.ButtonClickedErase
+
     def mouseMoveEvent(self, e):
         pass
 
     def mouseMoveEventPen(self, e):        
         painter = QPainter(self.pixmap())
-        painter.setPen(QPen(QColor(self.pencolor), 2))
+        painter.setPen(QPen(QColor(self.pencolor), self.cb.currentIndex()))
         painter.drawLine(self.begin, e.pos())
         self.begin = e.pos()
         painter.end()
