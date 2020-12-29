@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QHBoxLayout, QWidget, QPushButton, QFileDialog, QColorDialog, QGridLayout, QGraphicsScene
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QHBoxLayout, QWidget, QPushButton, QFileDialog, QColorDialog, QGridLayout, QGraphicsScene, QComboBox
 from PyQt5.QtGui import QPainter, QPen, QBrush, QPixmap, QColor
 from PyQt5.QtCore import QPoint, QRect
 from copy import deepcopy
@@ -7,6 +7,8 @@ from copy import deepcopy
 class Canvas(QLabel):
     def __init__(self, parent, size):
         super().__init__(parent=parent)
+
+        self.count = 10
 
         self.size = size
         self.setPixmap(QPixmap(*size))
@@ -74,6 +76,29 @@ class Canvas(QLabel):
         btnLine.resize(50, 50)
         btnLine.move(540, 20)
         btnLine.clicked.connect(self.changeMouseMoveEvent4)
+
+        btnErase = QPushButton('지우개', self)
+        btnErase.resize(50, 50)
+        btnErase.move(600, 20)
+        #btnErase.clicked.connect()
+
+        
+        self.label = QLabel('선 두께', self)
+        self.label.resize(50, 50)
+        self.label.move(660, 20)
+
+        cb = QComboBox(self)
+        cb.addItem('1')
+        cb.addItem('2')
+        cb.addItem('3')
+        cb.addItem('4')
+        cb.addItem('5')
+        cb.addItem('6')
+        cb.addItem('7')
+        cb.addItem('8')
+        cb.addItem('9')
+        cb.addItem('10')
+        cb.move(720, 35)
 
     def ColorLine(self):       
         # 색상 대화상자 생성      
@@ -157,7 +182,7 @@ class Canvas(QLabel):
         fname = QFileDialog.getOpenFileName(self)
 
         pixmap = QPixmap(fname[0])
-        pixmap.resize
+        pixmap.scaled(1280, 720)
         self.setPixmap(QPixmap(pixmap))
 
         self.show()
@@ -175,7 +200,6 @@ class Canvas(QLabel):
         self.mouseMoveEvent = self.ButtonClickedLine
 
     def mouseMoveEvent(self, e):
-        self.count = 10
         pass
 
     def mouseMoveEventPen(self, e):        
