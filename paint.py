@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QHBoxLayout, QWidget, QPushButton, QFileDialog, QColorDialog, QGridLayout, QGraphicsScene
 from PyQt5.QtGui import QPainter, QPen, QBrush, QPixmap, QColor
-from PyQt5.QtCore import *
+from PyQt5.QtCore import QPoint, QRect
 
 class Canvas(QLabel):
     def __init__(self, parent, size):
@@ -28,6 +28,9 @@ class Canvas(QLabel):
         self.brushcolor = QColor(255,255,255)
 
         self.scene = QGraphicsScene() 
+        
+        self.begin = QPoint()
+        self.end = QPoint()
 
         # 그림판 초기화
         self.clear_canvas()
@@ -49,7 +52,7 @@ class Canvas(QLabel):
         btnSquare = QPushButton('사각형', self)   # 버튼 텍스트
         btnSquare.resize(50, 50)
         btnSquare.move(80, 20)   # 버튼 위치
-        btnSquare.clicked.connect(self.ButtonClickedSquare)
+        btnSquare.clicked.connect(self.changeMouseMoveEvent2)
 
         btnTriangle = QPushButton('세모', self)   # 버튼 텍스트
         btnTriangle.resize(50, 50)
@@ -79,21 +82,21 @@ class Canvas(QLabel):
         else:
             self.brushcolor = color
 
-    def ButtonClickedSquare(self):
-                if len(self.items) > 0:
-                    self.scene.removeItem(self.items[-1])
-                    del(self.items[-1])
 
-                rect = QRectF(self.start, self.end)
-                self.items.append(self.scene.addRect(rect, pen, brush))
+    def ButtonClickedSquare(self, e):
+        Square = QPainter(self.pixmap())
+        Square.setPen(QPen(QColor(self.pencolor)))
+        Square.drawRect(QRect(self.begin, self.end))
+        Square.end()
+        self.repaint()
 
     def mousePressEvent(self, e):
         self.begin = e.pos()
-        self.end = e.pos()
+        #self.end = e.pos()
         self.update()
 
     def mouseRelaseEvent(self, e):
-        self.begin = e.pos()
+        #self.begin = e.pos()
         self.end = e.pos()
         self.update()
 
@@ -103,15 +106,16 @@ class Canvas(QLabel):
     def changeMouseMoveEvent(self):
         self.mouseMoveEvent = self.mouseMoveEventPen
 
+    def changeMouseMoveEvent2(self):
+        self.mouseMoveEvent = self.ButtonClickedSquare
+
     def mouseMoveEvent(self, e):
         pass
 
     def mouseMoveEventPen(self, e):        
         painter = QPainter(self.pixmap())
         painter.setPen(QPen(QColor(self.pencolor), 2))
-        
         painter.drawPoint(e.x(), e.y())
-        
         painter.end()
 
         # QLabel을 업데이트 해주는 함수
