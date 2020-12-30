@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QHBoxLayout, QWidget, QPushButton, QFileDialog, QColorDialog, QGridLayout, QGraphicsScene, QComboBox, QMessageBox
-from PyQt5.QtGui import QPainter, QPen, QBrush, QPixmap, QColor
+from PyQt5.QtGui import QPainter, QPen, QBrush, QPixmap, QColor, QPolygon
 from PyQt5.QtCore import QPoint, QRect
 from copy import deepcopy
 
@@ -67,7 +67,7 @@ class Canvas(QLabel):
         btnTriangle = QPushButton('세모', self)   # 버튼 텍스트
         btnTriangle.resize(50, 50)
         btnTriangle.move(140, 20)   # 버튼 위치
-        #btnTriangle.clicked.connect()
+        btnTriangle.clicked.connect(self.changeMouseMoveEvent6)
 
         btnCircle = QPushButton('원', self)   # 버튼 텍스트
         btnCircle.resize(50, 50)
@@ -134,7 +134,6 @@ class Canvas(QLabel):
     def ColorLine(self):       
         # 색상 대화상자 생성      
         color = QColorDialog.getColor()
-    
         sender = self.sender()
  
         # 색상이 유효한 값이면 참, QFrame에 색 적용
@@ -156,11 +155,11 @@ class Canvas(QLabel):
         self.count = 1
         t_pixmap = self.pixmap()
         t_pixmap = t_pixmap.copy(0, 0, t_pixmap.width(), t_pixmap.height())
-        Square = QPainter(self.pixmap())
-        Square.setPen(QPen(QColor(self.pencolor), self.cb.currentIndex()))
-        Square.setBrush(QColor(self.brushcolor))
-        Square.drawEllipse(QRect(self.begin, e.pos()))
-        Square.end()
+        Circle = QPainter(self.pixmap())
+        Circle.setPen(QPen(QColor(self.pencolor), self.cb.currentIndex()))
+        Circle.setBrush(QColor(self.brushcolor))
+        Circle.drawEllipse(QRect(self.begin, e.pos()))
+        Circle.end()
         self.repaint()
         self.setPixmap(t_pixmap)
 
@@ -175,6 +174,21 @@ class Canvas(QLabel):
         Square.end()
         self.repaint()
         self.setPixmap(t_pixmap)
+
+    def ButtonClickedTriangle(self, e):
+        t_pixmap = self.pixmap()
+        t_pixmap = t_pixmap.copy(0, 0, t_pixmap.width(), t_pixmap.height())
+        Triangle = QPainter(self.pixmap())
+        Triangle.setPen(QPen(QColor(self.pencolor), self.cb.currentIndex()))
+        Triangle.setBrush(QColor(self.brushcolor))
+
+        points = QPolygon([
+            QPoint(10,10),
+            QPoint(10,100),
+            QPoint(100,10)
+        ])
+ 
+        Triangle.drawPolygon(points)
 
     def ButtonClickedLine(self, e):
         self.count = 2
@@ -217,6 +231,7 @@ class Canvas(QLabel):
             Square.end()
             self.repaint()
 
+
     def ButtonClickedFile(self):
         fname = QFileDialog.getOpenFileName(self)
 
@@ -256,7 +271,7 @@ class Canvas(QLabel):
         self.mouseMoveEvent = self.ButtonClickedErase
 
     def changeMouseMoveEvent6(self):
-        self.mouseMoveEvent = self.ButtonClickedErase
+        self.mouseMoveEvent = self.ButtonClickedTriangle
 
     def mouseMoveEvent(self, e):
         pass
