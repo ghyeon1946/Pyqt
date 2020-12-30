@@ -31,7 +31,7 @@ class Canvas(QLabel):
         self.backgroundcolor = QColor(255, 255, 255)
         self.backbtn = QPushButton('배경색', self)
         self.backbtn.resize(60, 50)
-        self.backbtn.move(840, 20)
+        self.backbtn.move(790, 20)
         self.backbtn.clicked.connect(self.ColorLine)
 
         self.scene = QGraphicsScene() 
@@ -84,6 +84,7 @@ class Canvas(QLabel):
         btnLine.move(540, 20)
         btnLine.clicked.connect(self.changeMouseMoveEvent4)
 
+        self.Erasercolor = QColor(255, 255, 255)
         btnErase = QPushButton('지우개', self)
         btnErase.resize(50, 50)
         btnErase.move(600, 20)
@@ -106,30 +107,26 @@ class Canvas(QLabel):
         self.cb.addItem('10')
         self.cb.move(720, 35)
 
-        self.label = QLabel('배경색', self)
-        self.label.resize(50, 50)
-        self.label.move(780, 20)
-
         btnSave = QPushButton('저장', self)
         btnSave.resize(50, 50)
-        btnSave.move(600, 20)
+        btnSave.move(860, 20)
         btnSave.clicked.connect(self.ButtonClickedsave)
 
     def ButtonClickedErase(self, e):
-        self.count == 3
+        self.pencolor = self.Erasercolor
         painter = QPainter(self.pixmap())
-        painter.setPen(QPen(QColor(self.backgroundcolor), 15))
+        painter.setPen(QPen(QColor(self.Erasercolor), 15))
         painter.drawLine(self.begin, e.pos())
         self.begin = e.pos()
         painter.end()
 
-        # QLabel을 업데이트 해주는 함수
+        # # QLabel을 업데이트 해주는 함수
         self.repaint()
 
     def ColorLine(self):       
         # 색상 대화상자 생성      
         color = QColorDialog.getColor()
- 
+    
         sender = self.sender()
  
         # 색상이 유효한 값이면 참, QFrame에 색 적용
@@ -140,8 +137,12 @@ class Canvas(QLabel):
             self.brushcolor = color
 
         elif sender == self.backbtn:
+            t_pixmap = self.pixmap()
+            t_pixmap = t_pixmap.copy(0, 0, t_pixmap.width(), t_pixmap.height())
+            t_pixmap.fill(color)
             self.backgroundcolor = color
-            self.clear_canvas()
+            self.Erasercolor = color
+            self.setPixmap(t_pixmap)
 
     def ButtonClickedCircle(self, e):
         self.count = 1
@@ -208,14 +209,6 @@ class Canvas(QLabel):
             Square.end()
             self.repaint()
 
-        elif self.count == 3:
-            back = QPainter(self.pixmap())
-            back.setPen(QPen(QColor(self.backgroundcolor),self.cb.currentIndex()))
-            back.setBrush(QColor(self.backgroundcolor))
-            back.drawLine(self.begin, e.pos())
-            back.end()
-            self.repaint()
-
     def ButtonClickedFile(self):
         fname = QFileDialog.getOpenFileName(self)
 
@@ -224,19 +217,12 @@ class Canvas(QLabel):
             pixmap = QPixmap(fname[0])
 
             self.label1.setPixmap(pixmap)  # 이미지 세팅
-            #self.label1.setContentsMargins(10, 50, 10, 10)
             self.label1.resize(pixmap.width(), pixmap.height())
 
             # 이미지의 크기에 맞게 Resize
             self.resize(pixmap.width(), pixmap.height())
 
             self.show()
-
-        # pixmap = QPixmap(fname[0])
-        # pixmap.scaled(1280, 720)
-        # self.setPixmap(QPixmap(pixmap))
-
-        # self.show()
         
     def ButtonClickedsave(self):
         buttonReply = QMessageBox.question(self, '저장', "저장하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
