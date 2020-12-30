@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QHBoxLayout, QWidget, QPushButton, QFileDialog, QColorDialog, QGridLayout, QGraphicsScene, QComboBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QHBoxLayout, QWidget, QPushButton, QFileDialog, QColorDialog, QGridLayout, QGraphicsScene, QComboBox, QMessageBox
 from PyQt5.QtGui import QPainter, QPen, QBrush, QPixmap, QColor
 from PyQt5.QtCore import QPoint, QRect
 from copy import deepcopy
@@ -109,6 +109,11 @@ class Canvas(QLabel):
         self.label = QLabel('배경색', self)
         self.label.resize(50, 50)
         self.label.move(780, 20)
+
+        btnSave = QPushButton('저장', self)
+        btnSave.resize(50, 50)
+        btnSave.move(600, 20)
+        btnSave.clicked.connect(self.ButtonClickedsave)
 
     def ButtonClickedErase(self, e):
         self.count == 3
@@ -233,6 +238,14 @@ class Canvas(QLabel):
 
         # self.show()
         
+    def ButtonClickedsave(self):
+        buttonReply = QMessageBox.question(self, '저장', "저장하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        
+        if buttonReply == QMessageBox.Yes:
+            self.pixmap().save("save.jpg")
+        else:
+            pass
+
     def changeMouseMoveEvent(self):
         self.mouseMoveEvent = self.mouseMoveEventPen
 
