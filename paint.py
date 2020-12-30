@@ -112,6 +112,14 @@ class Canvas(QLabel):
         btnSave.move(860, 20)
         btnSave.clicked.connect(self.ButtonClickedsave)
 
+        btnBrush2 = QPushButton('도형 비우기', self)
+        btnBrush2.resize(90, 50)
+        btnBrush2.move(920, 20)
+        btnBrush2.clicked.connect(self.ButtonClickedBrush)
+
+    def ButtonClickedBrush(self):
+        self.brushcolor = self.backgroundcolor
+
     def ButtonClickedErase(self, e):
         self.pencolor = self.Erasercolor
         painter = QPainter(self.pixmap())
@@ -120,7 +128,7 @@ class Canvas(QLabel):
         self.begin = e.pos()
         painter.end()
 
-        # # QLabel을 업데이트 해주는 함수
+        # QLabel을 업데이트 해주는 함수
         self.repaint()
 
     def ColorLine(self):       
@@ -245,6 +253,9 @@ class Canvas(QLabel):
         self.mouseMoveEvent = self.ButtonClickedLine
 
     def changeMouseMoveEvent5(self):
+        self.mouseMoveEvent = self.ButtonClickedErase
+
+    def changeMouseMoveEvent6(self):
         self.mouseMoveEvent = self.ButtonClickedErase
 
     def mouseMoveEvent(self, e):
