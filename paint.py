@@ -183,9 +183,9 @@ class Canvas(QLabel):
         Triangle.setBrush(QColor(self.brushcolor))
 
         points = QPolygon([
-            QPoint(10,10),
-            QPoint(10,100),
-            QPoint(100,10)
+            QPoint(350, 450),
+            QPoint(450,550),
+            QPoint(550,350)
         ])
  
         Triangle.drawPolygon(points)
@@ -230,7 +230,6 @@ class Canvas(QLabel):
             Square.drawLine(self.begin, e.pos())
             Square.end()
             self.repaint()
-
 
     def ButtonClickedFile(self):
         fname = QFileDialog.getOpenFileName(self)
